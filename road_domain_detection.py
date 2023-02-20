@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from utils import Utils
-from rdd_components.iep import IEP
+from iep import IEP
 class RDD:
     """this class serves as a method to detect the road"""
     def __init__(self,frame=None):
