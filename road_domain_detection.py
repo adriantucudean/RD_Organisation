@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-
-
+from utils import Utils
+from rdd_components.iep import IEP
 class RDD:
     """this class serves as a method to detect the road"""
     def __init__(self,frame=None):
@@ -21,7 +21,7 @@ class RDD:
         self.dreapta_lim=0
         self.mijloc=0
     def prepair_fsv(self):
-        """ Searches for horisontal limits StangaLim and DreaptaLim"""
+        """ Searches for horisontal limits stanga_lim and dreapta_lim"""
         """Defines the Road shape"""
         mask=cv2.Canny(self.frame,100,90)
         cv2.imshow("canny",mask)
@@ -101,9 +101,9 @@ class RDD:
                 else:
                     if R>0.80*self.segments:
                         intersection=1
-                        cv2.rectangle(self.frame,(int(GxR/R-90),int(GyR/R)-105),(int(GxR/R)+200,int(GyR/R)-55),(255,255,255),-1)
-                        cv2.rectangle(self.frame,(int(GxR/R-90),int(GyR/R)-105),(int(GxR/R)+200,int(GyR/R)-55),(0,0,0),2)
-                        cv2.putText(self.frame,"INTERSECTION ENTRY POINT",(int(GxR/R-80),int(GyR/R)-70),self.font, 0.6,(0,0,0),2,cv2.LINE_AA)
+                        cv2.rectangle(self.frame,(int(GxR/R-90),int(GyR/R)-100),(int(GxR/R)+190,int(GyR/R)-60),(255,255,255),-1)
+                        cv2.rectangle(self.frame,(int(GxR/R-90),int(GyR/R)-100),(int(GxR/R)+190,int(GyR/R)-60),(0,0,255),2)
+                        cv2.putText(self.frame,"INTERSECTION ENTRY POINT",(int(GxR/R-80),int(GyR/R)-70),self.font, 0.6,(0,0,255),2,cv2.LINE_AA)
             else:
                 contorG=contorG+1
                 x_cil=x_cil+self.y_seg[j]
@@ -114,7 +114,13 @@ class RDD:
         cv2.line(self.frame,(self.y_seg[0],self.x_seg[0]),(self.y_seg[0],self.height-10),(255),4)
         cv2.line(self.frame,(self.y_seg[self.segments-1],self.x_seg[self.segments-1]),(self.y_seg[self.segments-1],self.height-10),(255),4)
         cv2.line(self.frame,(self.y_seg[0],self.height-10),(self.y_seg[self.segments-1],self.height-10),(255),4)
-        
-        
+        c = Utils.PolyArray(self.y_seg, self.x_seg, self.dreapta_lim, self.stanga_lim)
+        #cv2.drawContours(self.frame, [c], -1, (0, 255, 0), -1)
+        #cv2.drawContours(self.frame, [c], -1, (0, 255, 0), 2)
+        #----------------------------------------------------------------------------------------------
+        if intersection == 0:
+            iep = IEP(self.frame, self.x_seg, self.y_seg, self.segments,
+                      contorG, contorR, self.dreapta_lim, self.stanga_lim)
 
-        
+            okS,okD=iep.discontinued_line()
+            okR, okL = iep.intersection_exit_points()
