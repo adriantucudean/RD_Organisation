@@ -3,7 +3,7 @@ import numpy
 import math
 import imutils
 import numpy as np
-def PolyArray(X, Y, dreapta_lim, stanga_lim):
+def poly_array(X, Y, dreapta_lim, stanga_lim):
         """This function converts a poly array into an opencv contour"""
         h = 470
         c = np.zeros((len(X)+2, 2), np.int32)
